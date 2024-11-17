@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Auth\Events\Registered;
 class AuthController extends Controller
 {
     public function login()
@@ -17,11 +17,11 @@ class AuthController extends Controller
     {
         
         // Validate the request data
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:8',
-        ]);
+        // $validatedData = $request->validate([
+        //     'name' => 'required|string|max:255',
+        //     'email' => 'required|string|email|max:255',
+        //     'password' => 'required|string|min:8',
+        // ]);
         // dd($validatedData);
         // die();
         // Create a new user instance and save it
@@ -32,7 +32,8 @@ class AuthController extends Controller
 
         $user->save();
 
-        $user->sendEmailVerificationNotification();
+        // $user->sendEmailVerificationNotification();
+        event(new Registered($user));
 
         // Optionally, return a response or redirect
         return response()->json([
